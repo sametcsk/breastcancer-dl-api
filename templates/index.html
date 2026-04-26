@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Kanseri Teşhis Sistemi</title>
+    <meta name="description" content="Yapay zeka destekli meme kanseri risk değerlendirme sistemi. 5 temel özellik ile hızlı ve güvenilir sonuç.">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated background particles -->
+    <div class="bg-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <main class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+                        <path d="M24 8C24 8 18 14 18 20C18 23.3 20.7 26 24 26C27.3 26 30 23.3 30 20C30 14 24 8 24 8Z" fill="currentColor" opacity="0.6"/>
+                        <path d="M16 22C16 22 12 26 12 30C12 32.8 14.2 35 17 35C19.8 35 22 32.8 22 30C22 26 16 22 16 22Z" fill="currentColor" opacity="0.4"/>
+                        <path d="M32 22C32 22 28 26 28 30C28 32.8 30.2 35 33 35C35.8 35 38 32.8 38 30C38 26 32 22 32 22Z" fill="currentColor" opacity="0.4"/>
+                        <circle cx="24" cy="38" r="3" fill="currentColor" opacity="0.8"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>Meme Kanseri Teşhis</h1>
+                    <p class="tagline">Yapay Zeka Destekli Risk Değerlendirme</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Info Banner -->
+        <div class="info-banner">
+            <div class="info-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M10 6V6.01M10 9V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <p>Bu sistem, tümör biyopsi sonuçlarından elde edilen <strong>5 temel özelliği</strong> analiz ederek risk değerlendirmesi yapar. Sonuçlar yalnızca bilgilendirme amaçlıdır.</p>
+        </div>
+
+        <!-- Main Card -->
+        <section class="card" id="prediction-card">
+            <div class="card-header">
+                <h2>Özellik Değerlerini Girin</h2>
+                <p class="card-desc">Biyopsi raporunuzdaki değerleri ilgili alanlara giriniz.</p>
+            </div>
+
+            <form id="prediction-form" class="features-grid" autocomplete="off">
+                {% for feature in features %}
+                <div class="input-group" style="--delay: {{ loop.index0 * 0.08 }}s">
+                    <label for="feature-{{ loop.index0 }}" class="input-label">
+                        <span class="label-number">{{ loop.index }}</span>
+                        <div class="label-text-wrapper">
+                            <span class="label-text">{{ feature.name }} <span class="label-tr">({{ feature.name_tr }})</span></span>
+                            <span class="label-range">Aralık: {{ feature.min }} - {{ feature.max }}</span>
+                        </div>
+                    </label>
+                    <div class="input-wrapper">
+                        <input
+                            type="number"
+                            id="feature-{{ loop.index0 }}"
+                            name="feature-{{ loop.index0 }}"
+                            step="any"
+                            placeholder="Değer giriniz"
+                            required
+                            class="feature-input"
+                        >
+                        <div class="input-focus-ring"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </form>
+
+            <button id="predict-btn" type="button" class="predict-button">
+                <span class="btn-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 2L10 18M10 18L16 12M10 18L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="rotate(180 10 10)"/>
+                    </svg>
+                </span>
+                <span class="btn-text">Analiz Et</span>
+                <span class="btn-loader hidden">
+                    <span class="spinner"></span>
+                </span>
+            </button>
+        </section>
+
+        <!-- Result Section -->
+        <section id="result-section" class="result-section hidden">
+            <div class="result-card" id="result-card">
+                <div class="result-header">
+                    <div class="result-icon" id="result-icon">
+                        <svg id="icon-check" class="hidden" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                            <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2"/>
+                            <path d="M15 24L21 30L33 18" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <svg id="icon-warning" class="hidden" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                            <path d="M24 4L44 40H4L24 4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M24 18V28M24 34V34.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3 id="result-title"></h3>
+                    <p id="result-subtitle" class="result-subtitle"></p>
+                </div>
+
+                <div class="result-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Tahmin Sınıfı</span>
+                        <span class="detail-value" id="prediction-value"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Güven Oranı</span>
+                        <div class="confidence-bar-wrapper">
+                            <div class="confidence-bar" id="confidence-bar">
+                                <div class="confidence-fill" id="confidence-fill"></div>
+                            </div>
+                            <span class="confidence-text" id="confidence-text"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-disclaimer">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.2"/>
+                        <path d="M8 5V5.01M8 7V11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    <p>Bu sonuç yalnızca yapay zeka tahminidir. Kesin teşhis için mutlaka bir sağlık uzmanına başvurunuz.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Error message -->
+        <div id="message-box" class="message-box hidden"></div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>© 2026 Meme Kanseri Teşhis Sistemi · Yapay Zeka Destekli</p>
+        </footer>
+    </main>
+
+    <script>
+        const form = document.getElementById("prediction-form");
+        const predictButton = document.getElementById("predict-btn");
+        const messageBox = document.getElementById("message-box");
+        const resultSection = document.getElementById("result-section");
+        const resultCard = document.getElementById("result-card");
+        const resultTitle = document.getElementById("result-title");
+        const resultSubtitle = document.getElementById("result-subtitle");
+        const predictionValue = document.getElementById("prediction-value");
+        const confidenceBar = document.getElementById("confidence-fill");
+        const confidenceText = document.getElementById("confidence-text");
+        const iconCheck = document.getElementById("icon-check");
+        const iconWarning = document.getElementById("icon-warning");
+        const btnText = document.querySelector(".btn-text");
+        const btnIcon = document.querySelector(".btn-icon");
+        const btnLoader = document.querySelector(".btn-loader");
+
+        function showMessage(text, isError = true) {
+            messageBox.textContent = text;
+            messageBox.classList.remove("hidden", "error", "success");
+            messageBox.classList.add(isError ? "error" : "success");
+            messageBox.style.animation = "slideUp 0.4s ease";
+        }
+
+        function clearMessage() {
+            messageBox.classList.add("hidden");
+            messageBox.textContent = "";
+        }
+
+        function hideResult() {
+            resultSection.classList.add("hidden");
+        }
+
+        function setLoading(loading) {
+            predictButton.disabled = loading;
+            btnText.textContent = loading ? "Analiz Ediliyor..." : "Analiz Et";
+            btnIcon.classList.toggle("hidden", loading);
+            btnLoader.classList.toggle("hidden", !loading);
+        }
+
+        predictButton.addEventListener("click", async () => {
+            clearMessage();
+            hideResult();
+
+            // Her input alanından değerleri topla
+            const inputs = form.querySelectorAll(".feature-input");
+            const features = [];
+            let hasEmpty = false;
+            let hasInvalid = false;
+
+            inputs.forEach((input) => {
+                const val = input.value.trim();
+                if (val === "") {
+                    hasEmpty = true;
+                    input.closest(".input-group").classList.add("input-error");
+                } else {
+                    const num = Number(val);
+                    if (Number.isNaN(num)) {
+                        hasInvalid = true;
+                        input.closest(".input-group").classList.add("input-error");
+                    } else {
+                        features.push(num);
+                        input.closest(".input-group").classList.remove("input-error");
+                    }
+                }
+            });
+
+            if (hasEmpty) {
+                showMessage("Lütfen tüm alanları doldurunuz.");
+                return;
+            }
+            if (hasInvalid) {
+                showMessage("Tüm değerler geçerli birer sayı olmalıdır.");
+                return;
+            }
+
+            setLoading(true);
+
+            try {
+                const response = await fetch("/predict", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ features }),
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    const detail = data.detail || "Tahmin sırasında bir hata oluştu.";
+                    showMessage(detail);
+                    return;
+                }
+
+                // Sonuçları göster
+                const isLowRisk = data.risk_level === "low";
+
+                resultCard.className = "result-card " + (isLowRisk ? "result-low" : "result-high");
+                resultTitle.textContent = data.result;
+                resultSubtitle.textContent = isLowRisk
+                    ? "Analiz sonucuna göre düşük risk tespit edilmiştir."
+                    : "Analiz sonucuna göre yüksek risk tespit edilmiştir. Lütfen bir uzmana danışın.";
+
+                predictionValue.textContent = isLowRisk ? "İyi Huylu (Benign)" : "Kötü Huylu (Malignant)";
+
+                // Güven çubuğu animasyonu
+                confidenceText.textContent = `%${data.confidence}`;
+                confidenceBar.style.width = "0%";
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        confidenceBar.style.width = `${data.confidence}%`;
+                        confidenceBar.className = "confidence-fill " + (isLowRisk ? "fill-low" : "fill-high");
+                    });
+                });
+
+                iconCheck.classList.toggle("hidden", !isLowRisk);
+                iconWarning.classList.toggle("hidden", isLowRisk);
+
+                resultSection.classList.remove("hidden");
+                resultSection.scrollIntoView({ behavior: "smooth", block: "center" });
+
+            } catch (error) {
+                showMessage("Sunucuya bağlanırken bir hata oluştu.");
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Input error sınıfını focus olunca kaldır
+        document.querySelectorAll(".feature-input").forEach((input) => {
+            input.addEventListener("focus", () => {
+                input.closest(".input-group").classList.remove("input-error");
+            });
+        });
+    </script>
+</body>
+</html>
