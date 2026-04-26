@@ -3,7 +3,8 @@
 Bu proje, yapay zeka (PyTorch) destekli, sadece 5 temel özelliği (hücre çekirdeği özellikleri) kullanarak meme kanseri risk değerlendirmesi yapan bir web uygulamasıdır. Backend için **FastAPI**, frontend için modern ve duyarlı (responsive) Vanilla HTML/CSS kullanılmıştır.
 
 ## Özellikler ✨
-- **Makine Öğrenmesi:** Wisconsin Meme Kanseri veri setinden Random Forest ile en önemli 5 özellik seçilerek eğitilmiş bir PyTorch sinir ağı.
+- **Derin Öğrenme (Deep Learning):** Tahmin işlemleri PyTorch kullanılarak oluşturulmuş, 3 katmanlı bir Yapay Sinir Ağı (Neural Network) ile yapılmaktadır.
+- **Akıllı Özellik Seçimi:** Hastalardaki 30 farklı veriyi 5'e düşürmek (Feature Selection) için Random Forest algoritması bir "filtre" olarak kullanılmış, yapay sinir ağı bu en önemli 5 özellik üzerinden eğitilmiştir.
 - **Hızlı API:** Saniyeler içinde analiz yapabilen FastAPI sunucusu.
 - **Modern Arayüz:** Kullanıcı dostu, animasyonlu ve koyu mod destekli (dark theme) şık tasarım.
 - **Gerçek Zamanlı Sonuç:** Girilen 5 parametreye göre risk sınıfı ve yapay zeka güven (confidence) oranının anında gösterilmesi.
